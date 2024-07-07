@@ -4,11 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.entity.Account;
-import com.example.repository.AccountRepository;
-import com.example.repository.MessageRepository;
-import com.example.service.AccountService;
-import com.example.service.MessageService;
+import com.example.entity.*;
+import com.example.repository.*;
+import com.example.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,48 +30,99 @@ public class SocialMediaController {
     ObjectMapper mapper = new ObjectMapper();
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody String user) throws JsonMappingException, JsonProcessingException{
+    public ResponseEntity register(@RequestBody String user){
         try{
             Account account = mapper.readValue(user, Account.class);
             Account result = accountService.createAccount(account);
-        } catch(Exception e) {}
-        return null;
-        
+            if(result == null)
+                return ResponseEntity.status(400).body("Error Creating Account");
+            if(result.getAccountId() == -1)
+                return ResponseEntity.status(409).body("Account Already Exists");
+            return ResponseEntity.status(200).body(mapper.writeValueAsString(result));
+        } catch(Exception e) {
+            return ResponseEntity.status(400).body("Error");
+        }
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(){
-        return null;
+    public ResponseEntity login(@RequestBody String user){
+        try{
+            Account account = mapper.readValue(user, Account.class);
+            Account result = accountService.validate(account);
+            if(result == null)
+                return ResponseEntity.status(400).body("Unauthorized");
+            return ResponseEntity.status(200).body(mapper.writeValueAsString(result));
+        } catch(Exception e){
+            return ResponseEntity.status(400).body("Error");
+        }
     }
 
     @PostMapping("/messages")
-    public ResponseEntity createMessage(){
-        return null;
+    public ResponseEntity createMessage(@RequestBody String post){
+        try{
+            Message message = mapper.readValue(post, Message.class);
+            Message result = messageService.createMessage(message);
+            if(result == null)
+                return ResponseEntity.status(400).body("Error Creating Message");
+            return ResponseEntity.status(200).body(mapper.writeValueAsString(result));
+        } catch(Exception e){
+            return ResponseEntity.status(400).body("Error");
+        }
     }
 
     @GetMapping("/messages")
     public ResponseEntity allMessages(){
-        return null;
+        try{
+            return ResponseEntity.status(200).body(mapper.writeValueAsString(messageService.getAllMessages()));
+        } catch(Exception e){
+            return ResponseEntity.status(400).body("Error");
+        }
     }
 
     @GetMapping("/messages/{messageId}")
     public ResponseEntity messageById(@PathVariable int messageId){
-        return ResponseEntity.status(200).body("blah");
+        try{
+            Message message = messageService.getMessageById(messageId);
+            if(message == null)
+                return ResponseEntity.status(200).body("");
+            return ResponseEntity.status(200).body(mapper.writeValueAsString(message));
+        } catch(Exception e){
+            return ResponseEntity.status(400).body("Error");
+        }
+
     }
 
     @DeleteMapping("/messages/{messageId}")
     public ResponseEntity deleteById(@PathVariable int messageId){
-        return null;
+        try{
+            Message message = messageService.deleteMessage(messageId);
+            if(message == null)
+                return ResponseEntity.status(200).body("");
+            return ResponseEntity.status(200).body("1");
+        } catch(Exception e){
+            return ResponseEntity.status(400).body("Error");
+        }
     }
 
     @PatchMapping("/messages/{messageId}")
     public ResponseEntity updateById(@PathVariable int messageId){
-        return null;
+        try{
+            Message message = messageService.updateMessage(messageId);
+            if(message == null)
+                return ResponseEntity.status(400).body("Error Updating Message");
+            return ResponseEntity.status(200).body("1");
+        } catch(Exception e){
+            return ResponseEntity.status(400).body("Error");
+        }
     }
 
     @GetMapping("/accounts/{accountId}/messages")
     public ResponseEntity messagesByAccount(@PathVariable int accountId){
-        return null;
+        try{
+            return ResponseEntity.status(200).body(mapper.writeValueAsString(messageService.allMessagesByAccount(accountId)));
+        } catch(Exception e){
+            return ResponseEntity.status(400).body("Error");
+        }
     }
 
 }

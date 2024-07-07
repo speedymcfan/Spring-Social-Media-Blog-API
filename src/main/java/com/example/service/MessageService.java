@@ -19,7 +19,7 @@ public class MessageService {
         this.messageRepository = messageRepository;
     }
 
-    public Message getAllMessages(){
+    public List<Message> getAllMessages(){
         return null;
     }
 
