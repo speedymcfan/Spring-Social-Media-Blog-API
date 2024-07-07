@@ -1,7 +1,17 @@
 package com.example.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+
+import com.example.entity.Account;
+import com.example.repository.AccountRepository;
+import com.example.repository.MessageRepository;
+import com.example.service.AccountService;
+import com.example.service.MessageService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 /**
@@ -12,9 +22,23 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 public class SocialMediaController {
+
+    @Autowired
+    private AccountRepository accountRepository;
+    AccountService accountService = new AccountService(accountRepository);
+    @Autowired
+    private MessageRepository messageRepository;
+    MessageService messageService = new MessageService(messageRepository);
+    ObjectMapper mapper = new ObjectMapper();
+
     @PostMapping("/register")
-    public ResponseEntity register(){
+    public ResponseEntity register(@RequestBody String user) throws JsonMappingException, JsonProcessingException{
+        try{
+            Account account = mapper.readValue(user, Account.class);
+            Account result = accountService.createAccount(account);
+        } catch(Exception e) {}
         return null;
+        
     }
 
     @PostMapping("/login")
@@ -34,7 +58,7 @@ public class SocialMediaController {
 
     @GetMapping("/messages/{messageId}")
     public ResponseEntity messageById(@PathVariable int messageId){
-        return null;
+        return ResponseEntity.status(200).body("blah");
     }
 
     @DeleteMapping("/messages/{messageId}")
