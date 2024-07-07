@@ -21,7 +21,8 @@ public class AccountService {
     public Account findAccount(String username){
         if(username == null)
             return null;
-        Account account = accountRepository.find(username);
+        //Account account = accountRepository.find(username);
+        Account account = null;
         if(account == null)
             return new Account(-1, "user", "pass");
         return account;
