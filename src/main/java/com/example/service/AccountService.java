@@ -18,16 +18,43 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    public Account findAccount(Account account){
-        return null;
+    public Account findAccount(String username){
+        if(username == null)
+            return null;
+        Account account = accountRepository.find(username);
+        if(account == null)
+            return new Account(-1, "user", "pass");
+        return account;
     }
 
     public Account createAccount(Account account){
-        return null;
+        if(account.getUsername() == null)
+            return null;
+        Account check = findAccount(account.getUsername());
+        if(check == null){
+            return null;
+        }
+        if(check.getAccountId() == -1){
+            if(account.getPassword().length() < 4)
+                return null;
+            Account newAccount = new Account(account.getUsername(), account.getPassword());
+            accountRepository.save(newAccount);
+            return newAccount;
+        }
+        return new Account(-1, "user", "pass");
     }
 
     public Account validate(Account account){
-        return null;
+        if(account.getUsername() == null)
+            return null;
+        Account result = findAccount(account.getUsername());
+        if(result == null)
+            return null;
+        if(result.getAccountId() == -1)
+            return null;
+        if(!result.getPassword().equals(account.getPassword()))
+            return null;
+        return result;
     }
 
 }
