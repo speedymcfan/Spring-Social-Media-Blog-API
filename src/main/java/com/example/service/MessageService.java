@@ -20,11 +20,16 @@ public class MessageService {
     }
 
     public List<Message> getAllMessages(){
-        return null;
+        return messageRepository.findAll();
     }
 
     public Message getMessageById(int messageId){
-        return null;
+        Optional<Message> optional = messageRepository.findById((long) messageId);
+        if(optional.isEmpty())
+            return null;
+        else
+            return optional.get();
+
     }
 
     public Message createMessage(Message message){
