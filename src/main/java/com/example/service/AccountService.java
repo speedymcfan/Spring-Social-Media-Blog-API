@@ -3,8 +3,6 @@ package com.example.service;
 import com.example.entity.*;
 import com.example.repository.*;
 
-import java.util.*;
-
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import com.example.entity.*;
 import com.example.repository.*;
 import com.example.service.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -97,8 +95,8 @@ public class SocialMediaController {
     @DeleteMapping("/messages/{messageId}")
     public ResponseEntity deleteById(@PathVariable int messageId){
         try{
-            Message message = messageService.deleteMessage(messageId);
-            if(message == null)
+            int message = messageService.deleteMessage(messageId);
+            if(message == 0)
                 return ResponseEntity.status(200).body("");
             return ResponseEntity.status(200).body("1");
         } catch(Exception e){
@@ -107,10 +105,11 @@ public class SocialMediaController {
     }
 
     @PatchMapping("/messages/{messageId}")
-    public ResponseEntity updateById(@PathVariable int messageId){
+    public ResponseEntity updateById(@PathVariable int messageId, @RequestBody String post){
         try{
-            Message message = messageService.updateMessage(messageId);
-            if(message == null)
+            Message text = mapper.readValue(post, Message.class);
+            int result = messageService.updateMessage(messageId, text.getMessageText());
+            if(result == 0)
                 return ResponseEntity.status(400).body("Error Updating Message");
             return ResponseEntity.status(200).body("1");
         } catch(Exception e){
