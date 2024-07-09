@@ -22,11 +22,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class SocialMediaController {
 
     @Autowired
-    private AccountRepository accountRepository;
-    AccountService accountService = new AccountService(accountRepository);
+    AccountRepository accountRepository;
     @Autowired
-    private MessageRepository messageRepository;
-    MessageService messageService = new MessageService(messageRepository);
+    AccountService accountService;
+    @Autowired
+    MessageRepository messageRepository;
+    @Autowired
+    MessageService messageService;
     ObjectMapper mapper = new ObjectMapper();
 
     @PostMapping("/register")
@@ -50,7 +52,7 @@ public class SocialMediaController {
             Account account = mapper.readValue(user, Account.class);
             Account result = accountService.validate(account);
             if(result == null)
-                return ResponseEntity.status(400).body("Unauthorized");
+                return ResponseEntity.status(401).body("Unauthorized");
             return ResponseEntity.status(200).body(mapper.writeValueAsString(result));
         } catch(Exception e){
             return ResponseEntity.status(400).body("Error");

@@ -24,11 +24,8 @@ public class MessageService {
     }
 
     public Message getMessageById(int messageId){
-        Optional<Message> optional = messageRepository.findById((long) messageId);
-        if(optional.isEmpty())
-            return null;
-        else
-            return optional.get();
+        Message message = messageRepository.findMessageByMessageId(messageId);
+        return message;
 
     }
 

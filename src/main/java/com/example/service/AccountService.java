@@ -3,6 +3,8 @@ package com.example.service;
 import com.example.entity.*;
 import com.example.repository.*;
 
+import java.util.*;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +21,11 @@ public class AccountService {
     }
 
     public Account findAccount(String username){
-        if(username == null)
-            return null;
-        //Account account = accountRepository.find(username);
-        Account account = null;
+        if(username.length() < 1)
+            return null;       
+        Account account = accountRepository.findAccountByUsername(username);
         if(account == null)
-            return new Account(-1, "user", "pass");
+            return new Account(-1, "user9999", "pass");
         return account;
     }
 
